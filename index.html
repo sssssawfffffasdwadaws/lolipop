@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Test</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Typing Speed Test</h1>
+        <div id="sentenceDisplay"></div>
+        <textarea id="inputArea" placeholder="Start typing here..." rows="3"></textarea>
+        <div id="timer">Time: <span id="timeLeft">60</span>s</div>
+        <div id="result" class="hidden">
+            <p>Your WPM: <span id="wpm"></span></p>
+        </div>
+    </div>
+    
+    <script>
+        const sentenceDisplay = document.getElementById('sentenceDisplay');
+        const inputArea = document.getElementById('inputArea');
+        const sentence = "The quick brown fox jumps over the lazy dog.";
+        
+        sentenceDisplay.innerHTML = sentence.split('').map(letter => `<span class="letter">${letter}</span>`).join('');
+        
+        const letters = document.querySelectorAll('.letter');
+        let index = 0;
+        
+        inputArea.addEventListener('input', () => {
+            if (inputArea.value[index] === sentence[index]) {
+                letters[index].classList.add('correct');
+            }
+            index++;
+        });
+    </script>
+</body>
+</html>
