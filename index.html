@@ -4,7 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Typing Speed Test</title>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: url('https://i.ibb.co/album/TBc2fM83') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        #sentenceDisplay {
+            font-size: 32px;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+        .letter {
+            display: inline-block;
+            transition: transform 0.3s ease, color 0.3s ease;
+            font-size: 32px;
+            animation: float 2s infinite;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+        #inputArea {
+            width: 80%;
+            padding: 10px;
+            font-size: 18px;
+        }
+        #timer, #result {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -16,23 +65,58 @@
             <p>Your WPM: <span id="wpm"></span></p>
         </div>
     </div>
-    
     <script>
         const sentenceDisplay = document.getElementById('sentenceDisplay');
         const inputArea = document.getElementById('inputArea');
+        const timerElement = document.getElementById('timeLeft');
+        const resultElement = document.getElementById('result');
+        const wpmElement = document.getElementById('wpm');
+
         const sentence = "The quick brown fox jumps over the lazy dog.";
-        
         sentenceDisplay.innerHTML = sentence.split('').map(letter => `<span class="letter">${letter}</span>`).join('');
-        
+
         const letters = document.querySelectorAll('.letter');
         let index = 0;
-        
+        let correctChars = 0;
+        let timer = 60;
+        let timerInterval;
+
         inputArea.addEventListener('input', () => {
-            if (inputArea.value[index] === sentence[index]) {
+            const inputChar = inputArea.value[index];
+            if (inputChar === sentence[index]) {
                 letters[index].classList.add('correct');
+                correctChars++;
+            } else {
+                letters[index].classList.add('incorrect');
             }
             index++;
+            if (index === sentence.length) {
+                clearInterval(timerInterval);
+                calculateWPM();
+            }
         });
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timer--;
+                timerElement.textContent = timer;
+                if (timer === 0) {
+                    clearInterval(timerInterval);
+                    calculateWPM();
+                }
+            }, 1000);
+        }
+
+        function calculateWPM() {
+            inputArea.disabled = true;
+            const wordsTyped = correctChars / 5;
+            const minutes = (60 - timer) / 60;
+            const wpm = Math.round(wordsTyped / minutes);
+            wpmElement.textContent = wpm;
+            resultElement.classList.remove('hidden');
+        }
+
+        startTimer();
     </script>
 </body>
 </html>
